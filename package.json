@@ -1,0 +1,23 @@
+{
+  "name": "backend_proyectoux",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiegoMolinaaa/backend_ProyectoUX.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DiegoMolinaaa/backend_ProyectoUX/issues"
+  },
+  "homepage": "https://github.com/DiegoMolinaaa/backend_ProyectoUX#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0"
+  }
+}
