@@ -16,7 +16,7 @@ var urlEncodeParser = bodyParser.urlencoded({extended:true});
 
 //Definir el puerto
 let port = 3000;
-const uri = "mongodb+srv://gadumd:admin4@clusterproyectoux.qshylyi.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://moli:admin1@clusterproyectoux.qshylyi.mongodb.net/?retryWrites=true&w=majority";
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -53,9 +53,9 @@ console.log('Esta linea esta despues del .listen');
 app.get('/getInfo', (_req,res)=>{
     console.log('Recibi una peticion -get');
     res.status(200).send({
-        nombre: "Gerardo",
-        apellido: "Diaz",
-        carrera: "Ing. Ciencia de Datos e Inteligencia Artificial",
+        nombre: "Diego",
+        apellido: "Molina",
+        carrera: "Ingenieria en Sistemas Computacionales",
     });
 })
 
