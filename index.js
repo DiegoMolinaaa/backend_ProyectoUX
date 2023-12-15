@@ -1,11 +1,15 @@
 //Importanto express
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+
 
 
 //Importar otras librerias
 const path = require('path');
 const bodyParser = require('body-parser');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cors = require('cors');
+const { initializeApp } =require("firebase/app");
+const  { getAuth,createUserWithEmailAndPassword  } = require( "firebase/auth");
 
 //Init express 
 const app = express()
@@ -41,6 +45,8 @@ run().catch(console.dir);
 
 // utilizar / set el parser
 app.use(urlEncodeParser);
+app.use(cors()) 
+
 //Levantar el servidor 
 app.listen(port, ()=>{
     console.log('SERVIDOR CONEXTANDOSE CORRECTAMENTE EN EL PUERTO', port);
