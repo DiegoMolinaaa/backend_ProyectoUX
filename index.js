@@ -78,7 +78,7 @@ app.get('/getAlojamientos',async (req,res)=>{
   }catch (error){
     res.status(500).send("No se pudo ejecutar la query");
   } finally {
-    await client.close();
+    //await client.close();
   }
 
 } )
@@ -134,18 +134,20 @@ app.put('/crearReservacion',async (req,res)=>{
     const database = client.db("proyectoUX");
     const alojamiento = database.collection("Alojamientos");
     // Crear el filtro para la informacion
-    const { filter, nuevaReserva } = req.body;
-
+    const alojamientoRecibido = req.body.body.alojamiento;
+    const nuevaReserva = req.body.body.reservacion;
     /* Upsert en true significa que si el documento no existe lo crea*/
+    const idAlojamiento = alojamientoRecibido._id;
+    const filter = { _id: new ObjectId(idAlojamiento) };
     const options = { upsert: false ,returnOriginal: false};
 
     // Data con la que actualizaremos el documento.
     const updateDoc = {
-      $push: { reservaciones: nuevaReserva },
+      $push: { reservacion: nuevaReserva },
     };
     // Actualizar el primer documento que haga match con el filtro 
     const result = await alojamiento.findOneAndUpdate(filter, updateDoc, options);
-    res.status(200).json({ message: "Se creó la reservación correctamente", alojamientoReservado:result });
+    res.status(200).json({ message: "Se creó la reservación correctamente", result:result });
   }catch (error){
     res.status(500).send("No se pudo crear la reservacion")
   } finally {
@@ -259,11 +261,13 @@ app.post("/createUser",  (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const userName = req.body.userName;
-    const displayName = req.body.displayName;
-    const numero = req.body.phoneNumber;
+    const nombre = req.body.nombre;
+    const apellido = req.body.apellido;
+    console.log("Intenta crear usuario");
     createUserWithEmailAndPassword(auth, email, password)
     .then(async(userCredential) => {
       try{
+        console.log("Creo usuario firebase. Intenta mongo");
         const client = new MongoClient(uri);
         //Conectar con la base de datos, examenII, si la base de datos existe nos conectamos
         const database = client.db("proyectoUX");
@@ -272,20 +276,21 @@ app.post("/createUser",  (req, res) => {
         let usuario = {
           accessToken: accessToken,
           userName: userName,
-          nombreCompleto: displayName,
-          numeroTelefono:numero,
-          favoritos : {},
+          nombre: nombre,
+          apellido: apellido,
+          favoritos : [{}],
         };
         //Documento a insertar
         const doc = usuario;
-
+        console.log(doc);
+        console.log("Intenta crear usuario mongo");
         const result = await post.insertOne(doc);
         //Print the ID if the inserted docuemnt
         console.log(`El resultado fue:   ${result}`);
         console.log(`A document was inserted with the _id:   ${result.insertedId}`);
-        res.status(200).send("El Post se creo exitosamente")
+        res.status(200).json({ success: true });
       }catch(error){
-        res.status(200).send("No se creo el post, algo salio mal")
+        res.status(500).json({ success: false })
       } finally{
           //Close the MongoDB client connection
           await client.close();
@@ -306,31 +311,20 @@ app.post("/logIn", (req, res) =>{
     signInWithEmailAndPassword(auth, email, password)
     .then((resp) => {
       //Signed In
-      res.status(200).send({
-        msg: "Log In exitoso :)",
-        data: resp
-      })
+      console.log("Log in exitoso");
+      res.status(200).json({ success: true });
       
     })
     .catch ((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      res.status(500).send({
-        msg: "Error al hacer log in",
-        errorCode: errorCode,
-        errorMessage: errorMessage
-      })
+      res.status(500).json({ success: false })
     });
     
   } catch (error) {
     const errorCode = error.code;
     const errorMessage = error.message;
-    res.status(500).send({
-      msg: "Error al hacer log in",
-      errorCode: errorCode,
-      errorMessage: errorMessage
-    })
-    
+    res.status(500).json({ success: false })
   }
 })
 
@@ -338,9 +332,9 @@ app.post("/logOut",  (req,res) => {
     const auth = getAuth(firebaseApp);
     signOut(auth).then(() => {
       console.log('Se cerro bien la sesion');
-      res.status(200).send('Sesión cerrada correctamente'); 
+      res.status(200).json({ success: true });
     }).catch((error) => {
       console.log('Hubo un error');
-      res.status(500).send('Error al cerrar sesión');
+      res.status(500).json({ success: false })
     });
 });
