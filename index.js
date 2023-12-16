@@ -312,7 +312,7 @@ app.post("/logIn", (req, res) =>{
     .then((resp) => {
       //Signed In
       console.log("Log in exitoso");
-      res.status(200).json({ success: true });
+      res.status(200).send("true");
       
     })
     .catch ((error) => {
